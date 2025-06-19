@@ -5,7 +5,7 @@ return {
         build = ":TSUpdate",
         lazy = false,
         config = function()
-            require'nvim-treesitter.configs'.setup {
+            require'nvim-treesitter.configs'.setup ({
                 ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "cpp", "cmake" },
                 auto_install = true,
                 highlight = {
@@ -19,7 +19,16 @@ return {
                     end,
                     additional_vim_regex_highlighting = false,
                 },
-            }
+                incremental_selection = {
+                    enable = true,
+                    keymaps = {
+                        init_selection = "<Leader>s",
+                        node_incremental = "<Leader>si",
+                        scope_incremental = "<Leader>ss",
+                        node_decremental= "<Leader>sd",
+                    }
+                },
+            })
         end
     },
 }
