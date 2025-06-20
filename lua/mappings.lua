@@ -5,23 +5,25 @@ vim.keymap.set("n", "<C-h>", function() vim.cmd("wincmd h") end, { desc = "Move 
 vim.keymap.set("n", "<C-l>", function() vim.cmd("wincmd l") end, { desc = "Move to window right" })
 
 --create horizontal window
-vim.keymap.set("n", "<leader>vw", function()
+vim.keymap.set("n", "<leader>v", function()
     local cwd = vim.fn.expand("%:p:h") -- current file's directory
     vim.cmd("vsplit")                  -- vertical split new window
     vim.cmd("lcd " .. cwd)             -- set local cwd to current file dir
-    vim.cmd("edit .")                  -- open directory buffer (like ls)
+    --vim.cmd("edit .")                  -- open directory buffer (like ls)
+    vim.cmd("Explore")
 end, { desc = "Vertical split with current file's dir" })
 
 --create vertical window
-vim.keymap.set("n", "<leader>hw", function()
+vim.keymap.set("n", "<leader>h", function()
     local cwd = vim.fn.expand("%:p:h")
     vim.cmd("split")
     vim.cmd("lcd " .. cwd)
-    vim.cmd("edit .")
+    vim.cmd("Explore")
+    --vim.cmd("edit .")
 end, { desc = "Horizontal split with current file's dir" })
 
 -- window closing mechanic
-vim.keymap.set("n", "<leader>wc", function()
+vim.keymap.set("n", "<C-c>", function()
     if vim.bo.modified  then
         local choice = vim.fn.confirm("save changes before closing?", "&Yes\n&No", 1)
         if choice == 1 then 
