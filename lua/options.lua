@@ -1,3 +1,6 @@
+vim.g.loaded_netwr = 1
+vim.g.loaded_netwrPlugin = 1
+
 vim.opt.number = true
 vim.opt.relativenumber = true
         

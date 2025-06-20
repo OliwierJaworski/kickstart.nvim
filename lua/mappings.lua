@@ -6,22 +6,30 @@ vim.keymap.set("n", "<C-l>", function() vim.cmd("wincmd l") end, { desc = "Move 
 
 --create horizontal window
 vim.keymap.set("n", "<leader>vw", function()
-  local cwd = vim.fn.expand("%:p:h") -- current file's directory
-  vim.cmd("vsplit")                  -- vertical split new window
-  vim.cmd("lcd " .. cwd)             -- set local cwd to current file dir
-  vim.cmd("edit .")                  -- open directory buffer (like ls)
+    local cwd = vim.fn.expand("%:p:h") -- current file's directory
+    vim.cmd("vsplit")                  -- vertical split new window
+    vim.cmd("lcd " .. cwd)             -- set local cwd to current file dir
+    vim.cmd("edit .")                  -- open directory buffer (like ls)
 end, { desc = "Vertical split with current file's dir" })
 
 --create vertical window
 vim.keymap.set("n", "<leader>hw", function()
-  local cwd = vim.fn.expand("%:p:h")
-  vim.cmd("split")
-  vim.cmd("lcd " .. cwd)
-  vim.cmd("edit .")
+    local cwd = vim.fn.expand("%:p:h")
+    vim.cmd("split")
+    vim.cmd("lcd " .. cwd)
+    vim.cmd("edit .")
 end, { desc = "Horizontal split with current file's dir" })
 
+-- window closing mechanic
 vim.keymap.set("n", "<leader>wc", function()
-  vim.cmd("q")
-  end, { desc = "closing windows" })
+    if vim.bo.modified  then
+        local choice = vim.fn.confirm("save changes before closing?", "&Yes\n&No", 1)
+        if choice == 1 then 
+            vim.cmd("write")
+        end
+    end
+    vim.cmd("q!")
+end, { desc = "closing windows" })
 
-
+-- adding opening of new filetree
+vim.keymap.set("n","<C-n>", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
