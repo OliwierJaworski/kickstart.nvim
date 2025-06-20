@@ -33,6 +33,7 @@ return {
         "neovim/nvim-lspconfig",
         config = function()
             local on_attach = function(client, bufnr)
+
                 local buf_map = function(mode, lhs, rhs, desc)
                     vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
                 end
@@ -41,6 +42,7 @@ return {
                 buf_map("n", "<leader>e", vim.diagnostic.open_float, "Show diagnostics")
                 buf_map("n", "[d", vim.diagnostic.goto_prev, "Prev diagnostic")
                 buf_map("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
+                buf_map("n", "<leader>d", vim.lsp.buf.definition, "Go to definition")
             end
 
             local lspconfig = require("lspconfig")
