@@ -6,18 +6,18 @@ vim.keymap.set("n", "<C-l>", function() vim.cmd("wincmd l") end, { desc = "Move 
 
 --create horizontal window
 vim.keymap.set("n", "<leader>v", function()
-    local cwd = vim.fn.expand("%:p:h") -- current file's directory
+    --local cwd = vim.fn.expand("%:p:h") -- current file's directory
     vim.cmd("vsplit")                  -- vertical split new window
-    vim.cmd("lcd " .. cwd)             -- set local cwd to current file dir
+    --vim.cmd("lcd " .. cwd)             -- set local cwd to current file dir
     --vim.cmd("edit .")                  -- open directory buffer (like ls)
     vim.cmd("Explore")
-end, { desc = "Vertical split with current file's dir" })
+end, { desc = "vertical split with current file's dir" })
 
 --create vertical window
 vim.keymap.set("n", "<leader>h", function()
-    local cwd = vim.fn.expand("%:p:h")
+    --local cwd = vim.fn.expand("%:p:h")
     vim.cmd("split")
-    vim.cmd("lcd " .. cwd)
+    --vim.cmd("lcd " .. cwd)
     vim.cmd("Explore")
     --vim.cmd("edit .")
 end, { desc = "Horizontal split with current file's dir" })
