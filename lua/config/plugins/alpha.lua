@@ -1,3 +1,4 @@
+
 return {
     "goolord/alpha-nvim",
     dependencies = {
@@ -30,7 +31,7 @@ return {
         dashboard.section.buttons.val = {
             dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
             dashboard.button( "f", "󰱼  > Find file", ":lua require('telescope.builtin').find_files({ find_command = { 'rg', '--files' } })<CR>"),
-            dashboard.button( "F", "󰥨  > Find folder", ":lua search_and_scope_into_directory()<CR>"),
+            dashboard.button( "F", "󰥨  > Workspaces", ":Telescope workspaces<CR>"),
             dashboard.button( "r", "  > Recent"   , ":Telescope oldfiles<CR>"),
             dashboard.button( "c", "  > Config" , ":cd ~/.config/nvim | Telescope find_files<CR>"),
             dashboard.button( "l", "󰒲 > Lazy", ":Lazy<CR>"),

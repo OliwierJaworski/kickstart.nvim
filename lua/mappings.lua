@@ -35,3 +35,20 @@ end, { desc = "closing windows" })
 
 -- adding opening of new filetree
 vim.keymap.set("n","<C-n>", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+
+vim.keymap.set("n", "<C-g>", ":Neogit<CR>", { desc = "open neogit" })
+
+vim.keymap.set("n","<leader>wa", function()
+    local name = vim.fn.input("Workspace name:")
+    if name ~= "" then
+        vim.cmd("WorkspacesAdd " .. name)
+    end
+end, { desc = "add workspace"})
+
+vim.keymap.set("n","<leader>wr", function()
+    vim.cmd("Telescope find_files")
+    local name = vim.fn.input("Which workspace should be removed?")
+    if name ~= "" then
+        vim.cmd("WorkspacesRemove " .. name)
+    end
+end, { desc = "remove workspace"})
