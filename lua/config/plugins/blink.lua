@@ -1,3 +1,4 @@
+-- lsp completion plugin
 return {
   "saghen/blink.cmp",
   lazy = false,

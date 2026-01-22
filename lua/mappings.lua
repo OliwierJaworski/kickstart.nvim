@@ -4,7 +4,7 @@ vim.keymap.set("n", "<C-k>", function() vim.cmd("wincmd k") end, { desc = "Move 
 vim.keymap.set("n", "<C-h>", function() vim.cmd("wincmd h") end, { desc = "Move to window left" })
 vim.keymap.set("n", "<C-l>", function() vim.cmd("wincmd l") end, { desc = "Move to window right" })
 
---create horizontal window
+--create vertical window
 vim.keymap.set("n", "<leader>v", function()
     --local cwd = vim.fn.expand("%:p:h") -- current file's directory
     vim.cmd("vsplit")                  -- vertical split new window
@@ -13,7 +13,7 @@ vim.keymap.set("n", "<leader>v", function()
     vim.cmd("Explore")
 end, { desc = "vertical split with current file's dir" })
 
---create vertical window
+--create horizontal window
 vim.keymap.set("n", "<leader>h", function()
     --local cwd = vim.fn.expand("%:p:h")
     vim.cmd("split")
@@ -36,19 +36,6 @@ end, { desc = "closing windows" })
 -- adding opening of new filetree
 vim.keymap.set("n","<C-n>", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 
-vim.keymap.set("n", "<C-g>", ":Neogit<CR>", { desc = "open neogit" })
+-- instead of neogit use lazygit
+-- vim.keymap.set("n", "<C-g>", ":Neogit<CR>", { desc = "open neogit" })
 
-vim.keymap.set("n","<leader>wa", function()
-    local name = vim.fn.input("Workspace name:")
-    if name ~= "" then
-        vim.cmd("WorkspacesAdd " .. name)
-    end
-end, { desc = "add workspace"})
-
-vim.keymap.set("n","<leader>wr", function()
-    vim.cmd("Telescope find_files")
-    local name = vim.fn.input("Which workspace should be removed?")
-    if name ~= "" then
-        vim.cmd("WorkspacesRemove " .. name)
-    end
-end, { desc = "remove workspace"})

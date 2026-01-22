@@ -1,61 +1,148 @@
 return {
-    {
-        "mason-org/mason-lspconfig.nvim"
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+      "folke/lazydev.nvim",
+      ft = "lua",
     },
-    {
-        "mason-org/mason.nvim",
-        opts = {
-            check_outdated_packages_on_open = true,
-
-            ui = {
-                icons = {
-                    package_installed = "✓",
-                    package_pending = "➜",
-                    package_uninstalled = "✗"
-                }
-            },
-            pip = {
-                upgrade_pip = false,
-            },
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim", -- easier installation for lsp's
+    "stevearc/conform.nvim", --autoformatting
+    
+    config = function()
+      local servers = {
+        cmake = true,
+        bashls = true,
+        lua_ls = {
+          cmd = { "lua-language-server"},
         },
-        config = function()
-            require("mason").setup()
-            require("mason-lspconfig").setup({
-                ensure_installed = { "cmake", "rust_analyzer","clangd", "lua_ls", "zls","zls","pyright" ,"jsonls","yamlls" },
-                dependencies = {
-                    { "mason-org/mason.nvim", opts = {} },
-                    "neovim/nvim-lspconfig",
-                },
-            })
-        end,
-    },
-    {
-        "neovim/nvim-lspconfig",
-        config = function()
-            local on_attach = function(client, bufnr)
+        pyright = true,
+        jsonls = {
+          server_capabilities = {
+            documentFormattingProvider = false,
+          },
+          settings = {
+            json = {
+              schemas = require("schemastore").json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
+        yamlls = {
+          settings = {
+            yaml = {
+              schemaStore = {
+                enable = false,
+                url = "",
+              },
+            },
+          },
+        },
+        clangd = {
+          init_options = {
+            clangFileStatus = true
+          },
+          filetypes = {
+            "c",
+            "cpp",
+            "h",
+            "hpp"
+          },
+        },
+      }
 
-                local buf_map = function(mode, lhs, rhs, desc)
-                    vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-                end
+      require("mason").setup()
+      local ensure_installed = {
+        "stylua",
+        "lua_ls",
+      }
 
-                buf_map("n", "K", vim.lsp.buf.hover, "Hover info")
-                buf_map("n", "<leader>e", vim.diagnostic.open_float, "Show diagnostics")
-                buf_map("n", "[d", vim.diagnostic.goto_prev, "Prev diagnostic")
-                buf_map("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
-                buf_map("n", "<leader>d", vim.lsp.buf.definition, "Go to definition")
+      vim.list_extend(ensure_installed, servers_to_install)
+      require("mason-tool-installer").setup {ensure_installed = ensure_installed}
+
+      vim.lsp.config("*", {
+        capabilities = capabilities,
+      })
+      
+      -- configure and enable each LSP server
+      for name, config in pairs(servers) do
+        if config == true then
+          config = {}
+        end
+
+        -- only call vim.lsp.config if there are server-specific settings
+        if next(config) ~= nil then
+          --remove manual install flags -> only lsp config fields
+          local lsp_config = vim.tbl_deep_extend("force", {}, config)
+          lsp_config.manual_install = nil
+          vim.lsp.config(name, lsp_config)
+        end
+        vim.lsp.enable(name)
+      end
+
+      --setup keybinds and listener
+      vim.api.nvim_create_autocmd("LspAttach",{
+        callback = function(args)
+        local bufnr = args.buf
+        local client = assert(vim.lsp.get_client_by_id(args.data.client_id), "must have valid client")
+        
+        local settings = servers[client.name]
+        if type(settings) ~= "table" then
+          settings = {}
+        end
+
+        local builtin = require "telescope.builtin"
+
+        vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
+        -- vim.keymap.set("n", "gd", builtin.lsp_definitions, { buffer = 0 })
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = 0 })
+        vim.keymap.set("n", "gr", builtin.lsp_references, { buffer = 0 })
+        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = 0 })
+        vim.keymap.set("n", "gT", vim.lsp.buf.type_definition, { buffer = 0 })
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
+
+        vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
+        vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
+        vim.keymap.set("n", "<space>wd", builtin.lsp_document_symbols, { buffer = 0 })
+        vim.keymap.set("n", "<space>ww", function()
+          builtin.diagnostics { root_dir = true}
+        end, { buffer = 0 })
+
+        local filetype = vim.bo[bufnr].filetype
+        if disable_semantic_tokens[filetype] then
+          client.server_capabilities.semanticTokensProvider = nil
+        end
+
+         -- Override server capabilities
+        if settings.server_capabilities then
+          for k, v in pairs(settings.server_capabilities) do
+            if v == vim.NIL then
+              ---@diagnostic disable-next-line: cast-local-type
+              v = nil
             end
 
-            local lspconfig = require("lspconfig")
-            local servers = { "cmake", "rust_analyzer", "clangd", "lua_ls", "zls", "pyright", "jsonls", "yamlls" }
+            client.server_capabilities[k] = v
+          end
+        end
+      end,
+    
+    })
 
-            for _, server in ipairs(servers) do
-                lspconfig[server].setup {
-                    on_attach = on_attach,
-                    flags = { debounce_text_changes = 150 },
-                }
-            end
+    require("custom.autoformat").setup()
 
-            vim.diagnostic.config({ virtual_text = true, signs = true, update_in_insert = false })
-        end,
-    },
+    require("lsp_lines").setup()
+    vim.diagnostic.config { virtual_text = true, virtual_lines = false }
+
+    vim.keymap.set("", "<leader>l", function()
+      local config = vim.diagnostic.config() or {}
+      if config.virtual_text then
+        vim.diagnostic.config { virtual_text = false, virtual_lines = true }
+      else
+        vim.diagnostic.config { virtual_text = true, virtual_lines = false }
+      end
+    end, { desc = "Toggle lsp_lines" })
+  end,
+  }
 }
+
