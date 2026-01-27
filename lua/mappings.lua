@@ -39,3 +39,14 @@ vim.keymap.set("n","<C-n>", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 -- instead of neogit use lazygit
 -- vim.keymap.set("n", "<C-g>", ":Neogit<CR>", { desc = "open neogit" })
 
+-- Open compiler
+vim.api.nvim_set_keymap('n', '<F6>', "<cmd>CompilerOpen<cr>", { noremap = true, silent = true })
+
+-- Redo last selected option
+vim.api.nvim_set_keymap('n', '<F5>',
+     "<cmd>CompilerStop<cr>" -- (Optional, to dispose all tasks before redo)
+  .. "<cmd>CompilerRedo<cr>",
+ { noremap = true, silent = true })
+
+-- Toggle compiler results
+vim.api.nvim_set_keymap('n', '<C-F7>', "<cmd>CompilerToggleResults<cr>", { noremap = true, silent = true })
