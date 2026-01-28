@@ -4,6 +4,7 @@ return {
   lazy = false,
   build = "cargo build --release",
   dependencies = {
+    "L3MON4D3/LuaSnip",
     "rafamadriz/friendly-snippets",
     {
       "saghen/blink.compat",
@@ -15,7 +16,6 @@ return {
   opts = {
     snippets = {
       expand = function(args)
-        -- Adjust to your snippet engine if needed
         require("luasnip").lsp_expand(args.body)
       end,
     },
@@ -23,12 +23,18 @@ return {
       accept = {
         auto_brackets = { enabled = true },
       },
-      documentation = { auto_show = true, auto_show_delay_ms = 200 },
+      documentation = { 
+        auto_show = true, 
+        auto_show_delay_ms = 200 
+      },
       ghost_text = { enabled = false },
     },
     sources = {
       compat = {},
       default = { "lsp", "path", "snippets", "buffer" },
+    },
+    signature = {
+      enabled = true,  -- Show function signatures
     },
     keymap = {
       preset = "enter",
@@ -49,8 +55,8 @@ return {
       end
     end
     opts.sources.compat = nil
-
+    
+    -- Single setup call with merged opts
     require("blink.cmp").setup(opts)
   end,
 }
-
