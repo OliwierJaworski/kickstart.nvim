@@ -15,9 +15,7 @@ return {
   event = "InsertEnter",
   opts = {
     snippets = {
-      expand = function(args)
-        require("luasnip").lsp_expand(args.body)
-      end,
+      preset = "default",
     },
     completion = {
       accept = {

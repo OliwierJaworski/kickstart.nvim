@@ -1,25 +1,23 @@
 return {
   "neovim/nvim-lspconfig",
   dependencies = {
+  {
     "folke/lazydev.nvim",
     ft = "lua",
     opts = {
       library = {
-        -- Load luvit types when the `vim.uv` word is found
         { path = "luvit-meta/library", words = { "vim%.uv" } },
         { path = "/usr/share/awesome/lib/", words = { "awesome" } },
       },
     },
-    { "Bilal2453/luvit-meta", lazy = true },
-    "williamboman/mason.nvim",
-    "williamboman/mason-lspconfig.nvim",
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-    { "j-hui/fidget.nvim", opts = {} },
-    { "https://git.sr.ht/~whynothugo/lsp_lines.nvim" },
-    
-    -- Autoformatting
-    "stevearc/conform.nvim",
   },
+  { "Bilal2453/luvit-meta", lazy = true },
+  "williamboman/mason.nvim",
+  "williamboman/mason-lspconfig.nvim",
+  "WhoIsSethDaniel/mason-tool-installer.nvim",
+  { "j-hui/fidget.nvim", opts = {} },
+  { "https://git.sr.ht/~whynothugo/lsp_lines.nvim" },
+  "stevearc/conform.nvim",
   config = function()
     -- Setup Mason first
     require("mason").setup()
@@ -28,7 +26,6 @@ return {
     })
     
     -- Get lspconfig and capabilities
-    local lspconfig = require("lspconfig")
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     
     -- Server configurations
@@ -49,12 +46,16 @@ return {
     }
 
     -- Setup each server
-    for server, settings in pairs(servers) do
-      lspconfig[server].setup({
-        capabilities = capabilities,
-        settings = settings,
-      })
-    end
+    require("mason-lspconfig").setup_handlers({
+      function(server)
+        local lspconfig = require("lspconfig")
+        local server_opts = servers[server] or {}
+
+        server_opts.capabilities = capabilities
+
+        lspconfig[server].setup(server_opts)
+      end,
+    })
 
     -- Now setup the autocmd for keymaps when LSP attaches
     vim.api.nvim_create_autocmd("LspAttach", {
@@ -136,4 +137,5 @@ return {
       end,
     })
   end
+}
 }

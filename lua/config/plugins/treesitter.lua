@@ -9,22 +9,22 @@ return {
     branch = "main",
     lazy = false,
     config = function()
-      local treesitter = require("nvim-treesitter")
-      treesitter.setup()
-      treesitter.install { 'java', 'c', 'lua', 'vim', 'vimdoc',
-                           'query','javascript',
-                           'typescript', 'html', 'yaml' }
+      require("nvim-treesitter").setup({
+        ensure_installed = {
+          'java', 'c', 'lua', 'vim', 'vimdoc',
+          'query', 'javascript', 'typescript', 'html', 'yaml'
+        },
+        -- Use a C compiler directly — skips the need for tree-sitter CLI
+        compilers = { "gcc", "clang" },
+      })
 
       vim.api.nvim_create_autocmd('FileType', {
         pattern = { 'java', 'c', 'lua', 'vim', 'vimdoc', 'query', 'javascript', 'typescript', 'html', 'yaml' },
         callback = function()
-          -- syntax highlight
           vim.treesitter.start()
-
-          -- indentation
           vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
-      })
-    end,
+    })
+  end,
   },
 }
