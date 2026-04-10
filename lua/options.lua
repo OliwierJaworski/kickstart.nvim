@@ -34,5 +34,6 @@ vim.diagnostic.config({
         [vim.diagnostic.severity.INFO]  = "",
         [vim.diagnostic.severity.HINT]  = "",
       }
-    } 
+    },
+    { virtual_text = false}
   })

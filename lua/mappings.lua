@@ -50,3 +50,18 @@ vim.api.nvim_set_keymap('n', '<F5>',
 
 -- Toggle compiler results
 vim.api.nvim_set_keymap('n', '<F7>', "<cmd>CompilerToggleResults<cr>", { noremap = true, silent = true })
+
+vim.keymap.set("n","<leader><tab>",
+  function()
+    if vim.diagnostic.config().virtual_text then
+      vim.diagnostic.config({
+        virtual_text = false,
+        signs = true,
+        underline = true,
+      })
+    else
+      vim.diagnostic.config({
+      virtual_text = true,
+      })
+    end
+end, {desc = "enable/disable diagnostics"})
