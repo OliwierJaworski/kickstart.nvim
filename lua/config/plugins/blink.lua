@@ -2,16 +2,22 @@
 return {
   "saghen/blink.cmp",
   lazy = false,
-  build = "cargo build --release",
   dependencies = {
+    "saghen/blink.lib",
     "L3MON4D3/LuaSnip",
     "rafamadriz/friendly-snippets",
     {
       "saghen/blink.compat",
-      optional = true,
       lazy = false,
+      optional = true,
     },
   },
+  --build = "cargo build --release",
+  build = function()
+    -- build the fuzzy matcher, wait up to 60 seconds
+    -- you can use `gb` in `:Lazy` to rebuild the plugin as needed
+    require('blink.cmp').build():wait(60000)
+  end,
   event = "InsertEnter",
   opts = {
     snippets = {
